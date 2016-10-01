@@ -28,6 +28,8 @@
 	position: absolute;	
 	width: 0px; height: 0px;
 	border-radius: 0px; border: 1px solid Coral;
+	background-color: White;
+	z-index: 2;
 }
 
 /* ---- Document (message) symbols ---- */
@@ -43,6 +45,7 @@
 .mess {
 	position: absolute;
 	opacity: 0; /* fade in with timeline */
+	z-index: 3;
 }
 
 /* ---- Credits ---- */
