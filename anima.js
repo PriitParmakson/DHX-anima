@@ -8,20 +8,20 @@ var coordinates = []; // center points of DHS symbols
 var allDHS =[]; // pointers to DHS symbols
 
 // message symbols
-var innerRadius = 140;
+var innerRadius = 100;
 var innerCoordinates = []; // center points of mess symbols
 var mC = 0; // message counter
 var maxM = 6; // max messages
-const messIconWidth = 24;
-const messIconHeight = 24; 
+const messIconWidth = 56;
+const messIconHeight = 56; 
 
 // texts
-var tArray = ['Faster',
-	'Distributed',
-	'Modern',
-	'Low cost',
-	'Secure',
-	'DHX is great'];
+var tArray = ['faster',
+	'distributed',
+	'modern',
+	'low cost',
+	'secure',
+	'simple'];
 
 // timelines
 var tl; // animation
@@ -70,7 +70,7 @@ function drawSystems(nSystems, radius, center) {
   		.css('opacity', 0)
   		.appendTo($('#Systems'));
   	// accompany with text
-  	showText('DHX, a new protocol');
+  	showText('a new protocol');
   	// fade in grid circle
   	tl.to(gridCircle, 1, {opacity: 1, delay: 0.5});
 
@@ -81,15 +81,25 @@ function removeMessage(mess) {
 }
 
 function animateMessage() {
-	var sender, rec, messId, sym, mess;
-	sender = Math.floor((Math.random() * nSystems) + 1);
-	rec = Math.floor((Math.random() * nSystems) + 1);
+	var sender, rec, messId, sym, mess, recDHS;
+	// sender and rec are in range 0..(nSystems-1) 
+	sender = Math.floor(Math.random() * nSystems);
+	rec = Math.floor(Math.random() * nSystems);
 	if (sender == rec) return;
 	mC = mC + 1;
 	// show new text, if present
 	if (tArray[mC - 1] != '') {
 		showText(tArray[mC - 1]);
 	}
+	// sender and rec enlarge
+	senderDHS = '#DHS' + sender.toString();
+	recDHS = '#DHS' + rec.toString();
+	tl.to(senderDHS, 0.1, {width: 80, height: 80, borderRadius: 40,
+	  top: "-=10", left: "-=10"});
+	tl.to(recDHS, 0.1, {width: 80, height: 80, borderRadius: 40,
+	  top: "-=10", left: "-=10"});
+	// tl.to(senderDHS, 0.1, {backgroundColor: "rgba(255, 127, 80, 0.8)"});
+	// tl.to(recDHS, 0.1, {backgroundColor: "rgba(255, 127, 80, 0.8)"});
 	// Form message
 	messId = 'mess' + mC.toString();
 	sym = $('<i class="material-icons">&#xE0BE;</i>')
@@ -97,20 +107,25 @@ function animateMessage() {
 	mess = $('<div></div>')
 		.attr('id', messId)
 		.addClass('mess')
-		.css('left', innerCoordinates[sender - 1].x - messIconWidth / 2)
-		.css('top', innerCoordinates[sender - 1].y - messIconHeight / 2)
+		.css('left', coordinates[sender].x - messIconWidth / 2)
+		.css('top', coordinates[sender].y - messIconHeight / 2)
 		.append(sym);
 	$('#Messages').append(mess);
 	// Fade the new message in
 	tl.to(mess, 0.2, {opacity: 1});
 	// Move to rec position
-	tl.to(mess, 0.9, {left: innerCoordinates[rec - 1].x - messIconWidth / 2, 
-		top: innerCoordinates[rec - 1].y - messIconHeight / 2,
+	tl.to(mess, 0.9, {left: coordinates[rec].x - messIconWidth / 2, 
+		top: coordinates[rec].y - messIconHeight / 2,
 		ease:Power4.easeOut, delay: 0.3});
 	// Fade out and remove
 	tl.to(mess, 0.1, {opacity: 0.3,
 		onComplete: removeMessage,
 		onCompleteParams: [mess], delay: 0.2});
+	// sender & rec reset
+	tl.to(senderDHS, 0, {width: 60, height: 60, borderRadius: 30,
+	  top: "+=10", left: "+=10"});
+	tl.to(recDHS, 0.1, {width: 60, height: 60, borderRadius: 30,
+	  top: "+=10", left: "+=10"});
 }
 
 function addTextToCredits(text) {
@@ -128,9 +143,11 @@ function credits() {
 }
 
 function drawingFadeOut() {
+	tl.to($('#cText'), 0, {opacity: 0});
+	tl.to($('#fT'), 0.3, {opacity: 1});
 	tl.to($('#gridCircle'), 0.2, {opacity: 0, delay: 0.5});
-	tl.to(allDHS, 2, {scale:0.2, opacity:0.3});
-	tl.to($('#cText'), 0.2, {opacity: 0});
+	tl.to(allDHS, 3, {scale:0.2, opacity:0.3});
+	tl.to($('#fT'), 0.6, {opacity: 0, delay: 1});
 	credits();
 }
 
