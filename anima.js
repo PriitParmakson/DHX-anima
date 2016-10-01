@@ -69,10 +69,10 @@ function drawSystems(nSystems, radius, center) {
   		.css('border', '1px solid Coral')
   		.css('opacity', 0)
   		.appendTo($('#Systems'));
-  	// fade in grid circle
-  	tl.to(gridCircle, 0.2, {opacity: 1, delay: 0.3});
   	// accompany with text
-  	showText('DHX is great');
+  	showText('DHX, a new protocol');
+  	// fade in grid circle
+  	tl.to(gridCircle, 1, {opacity: 1, delay: 0.5});
 
 }
 
