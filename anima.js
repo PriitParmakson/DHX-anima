@@ -16,10 +16,11 @@ const messIconWidth = 24;
 const messIconHeight = 24; 
 
 // texts
-var tArray = ['DHX is fast',
-	'DHX has no single point of failure',
-	'DHX is modern',
-	'DHX is low cost',
+var tArray = ['Faster',
+	'Distributed',
+	'Modern',
+	'Low cost',
+	'Secure',
 	'DHX is great'];
 
 // timelines
@@ -85,8 +86,10 @@ function animateMessage() {
 	rec = Math.floor((Math.random() * nSystems) + 1);
 	if (sender == rec) return;
 	mC = mC + 1;
-	// show new text
-	// showText(tArray[mC - 1]);
+	// show new text, if present
+	if (tArray[mC - 1] != '') {
+		showText(tArray[mC - 1]);
+	}
 	// Form message
 	messId = 'mess' + mC.toString();
 	sym = $('<i class="material-icons">&#xE0BE;</i>')
@@ -147,13 +150,19 @@ function randomMessages() {
     }
 }
 
+function insertT(txt) {
+	$('#cText').text(txt);
+}
+
 function showText(txt) {
+	// Tekst tuleb lisada tweeni onStart funktsiooniga, muidu
+	// tekivad tekstid enneaegselt
 	var t = $('#cText');
 	// fade out previous text
 	tl.to(t, 0.3, {opacity: 0});
-	t.text(txt);
-	// fade in new text
-	tl.to(t, 0.3, {opacity: 1});
+	// insert and fade in new text
+	tl.to(t, 0.3, {opacity: 1, onStart: insertT,
+		onStartParams: [txt]});
 }
 
 function animate(){
