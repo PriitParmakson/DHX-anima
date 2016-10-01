@@ -1,1 +1,58 @@
-canvas { border: 1px solid black; }
+#AnimationContainer {
+	width: 400px; height: 400px;
+	margin: 10px;
+}
+
+/* ---- Text panel ---- */
+#tPanel {
+	width: 400px; 
+	height: 80px;
+	margin: 5px;
+}
+#cText {
+	position: relative;
+	text-align: center;
+	margin: 0;	
+	opacity: 0; /* fade in with timeline */
+	font-family: 'Source Code Pro', monospace;
+	color: Coral;
+	font-size: 30px;
+}
+
+/* ---- DHS symbols ---- */
+#Systems {
+	position: absolute;
+	top: 80px;
+}
+.DHS {
+	position: absolute;	
+	width: 0px; height: 0px;
+	border-radius: 0px; border: 1px solid Coral;
+}
+
+/* ---- Document (message) symbols ---- */
+#Messages {
+	position: absolute;
+	top: 80px;
+}
+.doku {
+	font-family: 'Material Icons';
+	font-size: 40px;	
+	color:	Coral;
+}
+.mess {
+	position: absolute;
+	opacity: 0; /* fade in with timeline */
+}
+
+/* ---- Credits ---- */
+#Credits {
+	position: absolute;
+	font-family: 'Source Code Pro', monospace;
+	color: Coral;
+	font-size: 30px;
+	left: 80px; top: 100px;
+}
+.creditTxt {
+	opacity: 0;
+}
