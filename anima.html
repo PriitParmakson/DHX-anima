@@ -3,12 +3,39 @@
   <head>
     <meta charset="utf-8"/>
     <title>DHX animation</title>
+
+  <!-- JQuery -->
+  <script src="https://code.jquery.com/jquery.min.js"></script>
+
+  <!--CDN link for  TweenMax-->
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.0/TweenMax.min.js"></script>
+
+  <!-- Material Design icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+
+  <!-- Source Code Pro font -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">  
+
     <script src="anima.js"></script>
     <link href="anima.css" rel="stylesheet">
   </head>
 
-  <body onload="draw();">
-    <canvas id="ala" width="600" height="600"></canvas>
+  <body onload="animate();">
+
+    <!-- changing text panel -->
+    <div id='tPanel'>
+      <p id='cText' style='text-align:center;'></p>
+    </div>
+
+    <div id='AnimationContainer'>
+
+      <div id='Systems'></div>
+      <div id='Messages'></div>
+      <div id='Credits'></div>
+
+    </div>
+
   </body>
 
 </html>
