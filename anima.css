@@ -56,3 +56,17 @@
 .creditTxt {
 	opacity: 0;
 }
+
+/* ---- Final text ---- */
+#finalT {
+	position: absolute;
+	font-family: 'Source Code Pro', monospace;
+	color: Coral;
+	font-size: 30px;
+	top: 200px;
+	width: 400px;
+}
+#fT {
+	text-align:center;
+	opacity: 0;
+}
