@@ -1,4 +1,4 @@
-center = {x: 200, y: 200}; // center point of the drawing
+center = {x: 225, y: 225}; // center point of the drawing
 
 // DHS symbols
 nSystems = 8; // number of DHSis
@@ -109,7 +109,8 @@ function credits() {
 	addTextToCredits('icons: Material Design');
 	addTextToCredits('font: Source Code Pro');
 	addTextToCredits('animation library: GSAP');
-	addTextToCredits('design & code: Priit Parmakson');
+	addTextToCredits('design & code:');
+	addTextToCredits('Priit Parmakson');
 }
 
 // ---- Main ----
