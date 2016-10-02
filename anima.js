@@ -8,15 +8,13 @@ var coordinates = []; // center points of DHS symbols
 var allDHS =[]; // pointers to DHS symbols
 
 // message symbols
-var innerRadius = 100;
-var innerCoordinates = []; // center points of mess symbols
 var mC = 0; // message counter
 var maxM = 6; // max messages
 const messIconWidth = 56;
 const messIconHeight = 56; 
 
 // texts
-var tArray = ['faster',
+var tArray = ['a new protocol', 'faster',
 	'distributed',
 	'modern',
 	'low cost',
@@ -47,14 +45,50 @@ function computeCoordinates() {
     	newY = Math.floor(center.y + radius * Math.sin(angle));
     	point = {x: newX, y: newY}
     	coordinates.push(point);
-    	newX = Math.floor(center.x + innerRadius * Math.cos(angle));
-    	newY = Math.floor(center.y + innerRadius * Math.sin(angle));
-    	point = {x: newX, y: newY}
-    	innerCoordinates.push(point);    	
 	} 
 }
 
+// Enlarge system symbol
+function enlargeSystemSymbol(s, tL, offset) {
+	if (offset !== undefined) {
+		tL.to('#DHS' + s.toString(), 0.2, {
+			width: 80, height: 80,
+			borderRadius: 40,
+		  	top: coordinates[s].y - DHSradius - 10,
+		  	left: coordinates[s].x - DHSradius - 10},
+		  	offset);			
+	}
+	else {
+		tL.to('#DHS' + s.toString(), 0.2, {
+			width: 80, height: 80,
+			borderRadius: 40,
+		  	top: coordinates[s].y - DHSradius - 10,
+		  	left: coordinates[s].x - DHSradius - 10});			
+	}
+}
+
+// Reset system symbol
+function resetSystemSymbol(s, tL, offset) {
+	if (offset !== undefined) {
+		tL.to('#DHS' + s.toString(), 0.2, {
+			width: 60, height: 60,
+			borderRadius: 30,
+		  	top: coordinates[s].y - DHSradius,
+		  	left: coordinates[s].x - DHSradius},
+		  	offset);	
+	}
+	else {
+		tL.to('#DHS' + s.toString(), 0.2, {
+			width: 60, height: 60,
+			borderRadius: 30,
+		  	top: coordinates[s].y - DHSradius,
+		  	left: coordinates[s].x - DHSradius});	
+	}
+}
+
 // Form a message DOM element, initial position at system sys
+// (0-based). Return message jQuery object.
+// Initial opacity: 0.
 function formAMessage(sys) {
 	mC = mC + 1;
 	var messId = 'mess' + mC.toString();
@@ -70,20 +104,30 @@ function formAMessage(sys) {
 	return mess;	
 }
 
-// Fade out the old and fade in the new text. 0.6 s
-function showText(tTL, txt) {
-	// Tekst tuleb lisada tweeni onStart funktsiooniga, muidu
-	// tekivad tekstid enneaegselt
-	var t = $('#cText');
-	// fade out previous text
-	tTL.to(t, 0.3, {opacity: 0});
-	// insert and fade in new text
-	tTL.to(t, 0.3, {opacity: 1,
-		onStart: function (txt) {
-			$('#cText').text(txt);
-		},
-		onStartParams: [txt]});
-	// show 2 s
+// Display new text
+function advanceText(tL) {
+
+	// Fade out the old and fade in the new text. 0.6 s
+	function showText(tL, txt) {
+		// Tekst tuleb lisada tweeni onStart funktsiooniga, muidu
+		// tekivad tekstid enneaegselt
+		var t = $('#cText');
+		// fade out previous text
+		tL.to(t, 0.3, {opacity: 0});
+		// insert and fade in new text
+		tL.to(t, 0.3, {opacity: 1,
+			onStart: function (txt) {
+				$('#cText').text(txt);
+			},
+			onStartParams: [txt]});
+		// show 2 s
+	}
+
+	tC = tC + 1;
+	if (tC == tArray.length) {
+		tC = 0
+	}
+	showText(tL, tArray[tC]);	
 }
 
 // Play the credits
@@ -113,31 +157,38 @@ function credits() {
 	addTextToCredits('Priit Parmakson');
 }
 
-// ---- Main ----
+/* ---- Main ---- */
 
 // Draw systems and call backAndForth()
 function drawSystems(nSystems, radius, center) {
   	var DHS, i, gridCircle, innerGridCircle;
+
   	// local timeline
   	var dTL = new TimelineLite({onComplete: 
   		function () { 
+  			// alert('drawSystems complete');
   			backAndForth(2); // chaining
   		}
-  	});	
+  	});
+
   	// draw DHS symbols	
   	for (i = 0; i < nSystems; i++) {
 		DHS = $('<div></div>')
 			.attr('id', 'DHS' + i.toString())
 			.addClass('DHS')
+			.css('display', 'none')
 			.css('left', coordinates[i].x - DHSradius)
 			.css('top', coordinates[i].y - DHSradius);
 		$('#Systems').append(DHS);
 		// Not necessary; remove
 		allDHS.push(DHS);
 		// growing symbols
-		dTL.to(DHS, 0.3, {width: DHSradius * 2, height: DHSradius * 2,
-			borderRadius: DHSradius, delay: 0.2});
+		dTL.to(DHS, 0.2, {display: 'block',
+			width: DHSradius * 2,
+			height: DHSradius * 2,
+			borderRadius: DHSradius, delay: 0.1});
 	}
+
   	// draw grid circle (transparent)
   	gridCircle = $('<div></div>')
   		.attr('id', 'gridCircle')
@@ -147,72 +198,20 @@ function drawSystems(nSystems, radius, center) {
   		.css('width', radius * 2)
   		.css('height', radius * 2)
   		.css('border-radius', radius)
-  		.css('border', '1px solid Coral')
+  		.css('border', '1px solid White')
   		.css('opacity', 0)
   		.appendTo($('#Systems'));
+
   	// accompany with text
-  	showText(dTL, 'a new protocol');
+  	advanceText(dTL);
+
   	// fade in grid circle
   	dTL.to(gridCircle, 1, {
   		opacity: 1, 
   		delay: 0.5});
 }
 
-// Roaming message
-function roamingMess() {
-	var rTL = new TimelineLite({
-		onComplete: credits
-	});
-
-	// display new text
-	tC = tC + 1;
-	if (tC == tArray.length) {
-		tC = 0
-	}
-	showText(rTL, tArray[tC]);
-
-	// form random path 
-	var path = [];
-	for (i = 0; i < nSystems; i++) {
-		path.push(i);
-	}
-	shuffle(path);
-
-	// traverse the path
-	// enlarge the start system
-	rTL.to('#DHS' + path[0].toString(), 0.2, {
-		width: 80, height: 80,
-		borderRadius: 40,
-	  	top: coordinates[path[0]].y - DHSradius - 10,
-	  	left: coordinates[path[0]].x - DHSradius - 10});
-	// create message
-	var mess = formAMessage(path[0]);
-	// Fade the new message in
-	rTL.to(mess, 0.2, {opacity: 1});
-
-	for (i = 0; i < nSystems; i++) {
-		if (i == (nSystems - 1)) {
-			r = path[0];
-		}
-		else {
-			r = path[i + 1];
-			// enlarge the next system
-			rTL.to('#DHS' + r.toString(), 0.2, {
-				width: 80, height: 80,
-				borderRadius: 40,
-			  	top: coordinates[r].y - DHSradius - 10,
-			  	left: coordinates[r].x - DHSradius - 10});
-		}
-		// Move to r position
-		rTL.to(mess, 0.2, {left: coordinates[r].x - messIconWidth / 2, 
-			top: coordinates[r].y - messIconHeight / 2,
-			ease:Power4.easeOut, delay: 0.1});
-	} 
-	// Fade message out and remove
-	rTL.to(mess, 0.1, {opacity: 0.3,
-		onComplete: function (mess) { mess.remove(); },
-		onCompleteParams: [mess], delay: 0.2});
-}
+/* ---- Effects ---- */
 
 // Back and forth movement. Repeat n times, for different systems,
 // then chain to toAllOthers()
@@ -249,12 +248,7 @@ function backAndForth(n) {
 			onCompleteParams: [mess], delay: 0.1});
 	}
 
-	// display new text
-	tC = tC + 1;
-	if (tC == tArray.length) {
-		tC = 0
-	}
-	showText(mTL, tArray[tC]);
+	advanceText(mTL);
 
 	// randomly select a sender and receiver
 	var s = Math.floor(Math.random() * nSystems); // mess sender
@@ -263,43 +257,56 @@ function backAndForth(n) {
 		r = Math.floor(Math.random() * nSystems); // mess sender
 	}
 	// enlarge the systems
-	mTL.to('#DHS' + s.toString(), 0.2, {
-		width: 80, height: 80,
-		borderRadius: 40,
-	  	top: coordinates[s].y - DHSradius - 10,
-	  	left: coordinates[s].x - DHSradius - 10});
-	mTL.to('#DHS' + r.toString(), 0.2, {
-		width: 80, height: 80,
-		borderRadius: 40,
-	  	top: coordinates[r].y - DHSradius - 10,
-	  	left: coordinates[r].x - DHSradius - 10},
-	  	'-=0.2');
+	enlargeSystemSymbol(s, mTL);
+	enlargeSystemSymbol(r, mTL, '-=0.2');
 
 	// send a message
-	for (var i = 0; i < 2; i++) {
+	for (var i = 0; i < 1; i++) {
 		// move the message
 		animateM(s, r);
 		animateM(r, s);
 	}
 
 	// reset systems
-	mTL.to('#DHS' + s.toString(), 0.3, {
-		width: 60, height: 60,
-		borderRadius: 30,
-	  	top: coordinates[s].y - DHSradius,
-	  	left: coordinates[s].x - DHSradius});
-	mTL.to('#DHS' + r.toString(), 0.3, {
-		width: 60, height: 60,
-		borderRadius: 30,
-	  	top: coordinates[r].y - DHSradius,
-	  	left: coordinates[r].x - DHSradius},
-	  	'-=0.3');
+	resetSystemSymbol(s, mTL);
+	resetSystemSymbol(r, mTL, '-=0.2');
+}
+
+// Circular movement of a message
+function everybodyGotMail() {
+	var tL = new TimelineLite({ onComplete: credits });
+	var mess, pos, newPos;
+
+	advanceText(tL);
+
+	mess = formAMessage(0);
+	enlargeSystemSymbol(0, tL);
+	tL.to(mess, 0.2, { opacity: 1 }, '-=0.2');
+	pos = 0;
+
+	for (i = 0; i < 20; i++) {
+		newPos = pos + 1;
+		if (newPos == nSystems) {
+			newPos = 0;
+		}
+		enlargeSystemSymbol(newPos, tL);
+		// Move to pos
+		tL.to(mess, 0.2, {
+			left: coordinates[pos].x - messIconWidth / 2, 
+			top: coordinates[pos].y - messIconHeight / 2,
+			ease:Power4.easeOut}, '-=0.2');					
+		resetSystemSymbol(pos, tL, '-=0.2');
+		pos = newPos;
+	}
+
+	// cleanup
+	// remove mess
+	tL.to(mess, 0.1, { opacity: 0 });
 }
 
 // Send messages from randomly selected sender to all others.
-// Repeat n times.
+// Repeat n times. Chain to everybodyGotMail
 function toAllOthers(n) {
-
 	if (n == 0) {
 		return
 	}
@@ -307,7 +314,7 @@ function toAllOthers(n) {
 	var mTL = new TimelineLite({onComplete:
 		function (n) {
 			if (n == 0) {
-				roamingMess();
+				everybodyGotMail();
 			}
 			else {
 				toAllOthers(n);
@@ -334,28 +341,15 @@ function toAllOthers(n) {
 			'-=0.3');
 	}
 
-	// display new text
-	tC = tC + 1;
-	if (tC == tArray.length) {
-		tC = 0
-	}
-	showText(mTL, tArray[tC]);
+	advanceText(mTL);
 
 	// randomly select a sender
 	var s = Math.floor(Math.random() * nSystems); // mess sender
+
 	// enlarge the systems
-	mTL.to('#DHS0', 0.3, {
-		width: 80, height: 80,
-		borderRadius: 40,
-	  	top: coordinates[0].y - DHSradius - 10,
-	  	left: coordinates[0].x - DHSradius - 10});
+	enlargeSystemSymbol(0, mTL);
 	for (i = 1; i < nSystems; i++) {
-		mTL.to('#DHS' + i.toString(), 0.3, {
-			width: 80, height: 80,
-			borderRadius: 40,
-		  	top: coordinates[i].y - DHSradius - 10,
-		  	left: coordinates[i].x - DHSradius - 10},
-		  	'-=0.3');
+		enlargeSystemSymbol(i, mTL, '-=0.2');
 	}
 
 	// send a message to all other systems
@@ -369,20 +363,13 @@ function toAllOthers(n) {
 	}
 
 	// reset systems
-	mTL.to('#DHS0', 0.3, {
-		width: 60, height: 60,
-		borderRadius: 30,
-	  	top: coordinates[0].y - DHSradius,
-	  	left: coordinates[0].x - DHSradius});
+	resetSystemSymbol(0, mTL);
 	for (i = 1; i < nSystems; i++) {
-		mTL.to('#DHS' + i.toString(), 0.3, {
-			width: 60, height: 60,
-			borderRadius: 30,
-		  	top: coordinates[i].y - DHSradius,
-		  	left: coordinates[i].x - DHSradius},
-		  	'-=0.3');
+		resetSystemSymbol(i, Material, '-=0.2');
 	}
 }
+
+/* ---- Initiation ---- */
 
 function animate(){
 	computeCoordinates();
