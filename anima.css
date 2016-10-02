@@ -1,12 +1,14 @@
 #AnimationContainer {
-	width: 400px; height: 400px;
+	width: 450px; height: 450px;
 	margin: 10px;
+	border-radius: 10px;
+	background-color: Coral;
 }
 
 /* ---- Text panel ---- */
 #tPanel {
-	width: 400px; 
-	height: 80px;
+	width: 450px; 
+	height: 40px;
 	margin: 5px;
 }
 #cText {
@@ -27,8 +29,8 @@
 .DHS {
 	position: absolute;	
 	width: 0px; height: 0px;
-	border-radius: 0px; border: 1px solid Coral;
-	background-color: White;
+	border-radius: 0px; border: 1px solid White;
+	// background-color: White;
 	z-index: 2;
 }
 
@@ -40,7 +42,7 @@
 .doku {
 	font-family: 'Material Icons';
 	font-size: 60px;	
-	color:	Coral;
+	color:	White;
 }
 .mess {
 	position: absolute;
@@ -52,9 +54,9 @@
 #Credits {
 	position: absolute;
 	font-family: 'Source Code Pro', monospace;
-	color: Coral;
+	color: White;
 	font-size: 30px;
-	left: 80px; top: 100px;
+	left: 30px; top: 100px;
 }
 .creditTxt {
 	opacity: 0;
@@ -64,10 +66,10 @@
 #finalT {
 	position: absolute;
 	font-family: 'Source Code Pro', monospace;
-	color: Coral;
+	color: White;
 	font-size: 30px;
 	top: 200px;
-	width: 400px;
+	width: 450px;
 }
 #fT {
 	text-align:center;
